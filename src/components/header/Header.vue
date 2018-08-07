@@ -44,10 +44,11 @@ export default {
     background-color: $blue;
     position: fixed;
     left: 0;
+    top: 0;
     right: 0;
     @include wh(100%, 2rem);
     line-height: 2rem;
-
+    z-index: 100;
   }
 
   .header-login {
