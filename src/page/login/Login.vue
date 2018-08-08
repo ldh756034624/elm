@@ -18,7 +18,7 @@
       <section class="input-container">
         <input placeholder="验证码" type="text" v-model="verifyCode"/>
         <div class="verify-code-wrap">
-          <img v-if="captchaCodeImg" :src="captchaCodeImg">
+          <img v-if="captchaCodeImg" :src="captchaCodeImg" @click="changeImg">
           <div class="change-img" @click="changeImg">
             <P>看不清</P>
             <P>换一张</P>
@@ -33,23 +33,39 @@
       </section>
 
       <div class="login-button" @click="goLogin">登录</div>
-
     </form>
 
+    <router-link class="forgetPwd" to="/fd">重置密码</router-link>
+
+    <alert-tip v-show="showTip" :tipTitle="tipTitle" @closeTip="closeTip"></alert-tip>
   </div>
 </template>
 
 <script>
 import headTop from '../../components/header/Header'
 import {getImgCode} from '../../service/Api'
+import alertTip from '../../components/common/AlertTip'
 
 export default {
   name: 'Login',
   components: {
-    headTop
+    headTop, alertTip
   },
   data: function () {
-    return {smsLogin: true, showPassword: false, password: null, captchaCodeImg: null, userName: null, verifyCode: null}
+    return {
+      smsLogin: true,
+      showPassword: false,
+      password: null,
+      captchaCodeImg: null,
+      userName: null,
+      verifyCode: null,
+      tipTitle: '请输入',
+      showTip: false
+    }
+  },
+  // eslint-disable-next-line
+  created() {
+    this.changeImg()
   },
   methods: {
     pwdShowStyle: function () {
@@ -61,8 +77,19 @@ export default {
         this.captchaCodeImg = res.code
       })
     },
+    valid: function (msg, input) {
+      if (!input) {
+        this.showTip = true
+        this.tipTitle = msg
+      }
+    },
     goLogin: function () {
-      alert(this.password+','+this.userName+','+this.verifyCode)
+      this.valid('请输入账号', this.userName)
+      this.valid('请输入密码', this.password)
+      this.valid('请输入验证码', this.verifyCode)
+    },
+    closeTip: function () {
+      this.showTip = false
     }
   }
 }
@@ -150,6 +177,13 @@ export default {
     border-radius: .2rem;
     text-align: center;
     padding: .4rem 1rem;
-    margin: .3rem 1rem;
+    margin: .3rem .6rem;
   }
+
+  .forgetPwd {
+    @include sc(.6rem, #3b95e9);
+    float: right;
+    margin: .3rem .5rem;
+  }
+
 </style>
